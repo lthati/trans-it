@@ -20,6 +20,10 @@
             'app.quick-panel',
 
             // Sample
-            'app.trans-it'
+            'app.trans-it',
+
+            "com.2fdevs.videogular",
+            "com.2fdevs.videogular.plugins.controls",
+            "uk.ac.soton.ecs.videogular.plugins.cuepoints"
         ]);
 })();

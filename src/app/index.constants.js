@@ -1,7 +1,7 @@
-(function ()
-{
+(function() {
     'use strict';
 
     angular
-        .module('fuse');
+        .module('fuse')
+        .constant('AssetBasePath', 'app/data/voicetranscript');
 })();

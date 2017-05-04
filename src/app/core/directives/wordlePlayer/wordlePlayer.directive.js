@@ -9,7 +9,8 @@
         return {
             restrict: 'E',
             scope: {
-                data: '='
+                data: '=',
+                wordClicked: '&wordClicked'
             },
             transclude: false,
             replace: true,
@@ -25,7 +26,8 @@
                     color: '#f0f0c0',
                     hover: window.drawBox,
                     click: function(item) {
-                        alert(item[0] + ': ' + item[1]);
+                        console.log('word clicked: ' + item);
+                        $scope.wordClicked()(JSON.parse(angular.toJson(item)));
                     },
                     backgroundColor: '#001f00'
                 });

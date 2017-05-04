@@ -6,13 +6,13 @@
         .controller('VoiceTranscript', VoiceTranscript);
 
     /** @ngInject */
-    function VoiceTranscript(VoiceTranscripts, $scope) {
+    function VoiceTranscript($scope, VoiceTranscriptService, $sce) {
         var vm = this;
 
         // Data
-        vm.voiceRecordings = VoiceTranscripts.data.recordings;
-        vm.wordle = VoiceTranscripts.data.wordle;
-        // WordCloud(angular.element('canvas').get(), { list: vm.wordle });
+        // vm.voiceRecordings = VoiceTranscripts.data.recordings;
+        vm.voiceRecordings = []
+            // vm.wordle = VoiceTranscripts.data.wordle;
 
         vm.ngFlowOptions = {
             // You can configure the ngFlow from here
@@ -30,7 +30,17 @@
         vm.fileAdded = fileAdded;
         vm.upload = upload;
         vm.fileSuccess = fileSuccess;
-
+        vm.config = {
+            sources: [
+                { src: "http://static.videogular.com/assets/videos/videogular.mp4", type: "video/mp4" },
+                { src: "http://static.videogular.com/assets/videos/videogular.webm", type: "video/webm" },
+                { src: "http://static.videogular.com/assets/videos/videogular.ogg", type: "video/ogg" }
+            ],
+            theme: "bower_components/videogular-themes-default/videogular.css",
+            plugins: {
+                poster: "http://www.videogular.com/assets/images/videogular.png"
+            }
+        };
         // Methods
 
         /**
@@ -110,13 +120,94 @@
         }
 
         vm.selectedRecording = null;
+        vm.selectedKeywordCuePoints = null;
+
+        function setCuePoints() {
+            var points = [];
+            vm.selectedKeywordCuePoints.forEach(function(ts) {
+                if (ts.keyword === vm.selectedKeyword) {
+
+                    ts.timestamps.forEach(function(timestamp) {
+                        points.push({ 'time': timestamp });
+                    });
+                }
+            });
+            vm.config.plugins.cuepoints.points = points;
+        }
+
+        function getCuePoints() {
+            VoiceTranscriptService.getCuePoints(vm.selectedRecording.fileId)
+                .then(function(response) {
+                    vm.selectedKeywordCuePoints = response.data;
+                    setCuePoints();
+                })
+                .catch(function(error) {
+                    console.log('cue points error occurred - ' + error);
+                });
+        }
+
+        function fetchCuePointPluginConfig() {
+            vm.config.plugins = {
+                controls: {
+                    autoHide: true,
+                    autoHideTime: 5000
+                },
+                cuepoints: {
+                    theme: {
+                        url: "bower_components/videogular-cuepoints/cuepoints.css",
+                    }
+                    // points: [
+                    // 	{ time: 18 },
+                    // 	{ time: 60 },
+                    // ],
+                },
+            };
+
+            getCuePoints();
+        }
+
+        function fetchKeywords() {
+            VoiceTranscriptService.getWordCount(vm.selectedRecording.fileId)
+                .then(function(response) {
+                    vm.wordle = response.data;
+                })
+                .catch(function(error) {
+                    console.log('cue points error occurred - ' + error);
+                });
+        }
+
+        function fetchTranscript() {
+            VoiceTranscriptService.getTranscript(vm.selectedRecording.name)
+                .then(function(response) {
+                    vm.transcript = response.data;
+                })
+                .catch(function(error) {
+                    console.log('cue points error occurred - ' + error);
+                });
+        }
 
         vm.playVideo = function(recording) {
+
             vm.selectedRecording = recording;
+            vm.config.sources = [{ src: $sce.trustAsResourceUrl(recording.url), type: 'video/mp4' }];
+
+            fetchKeywords();
+            fetchTranscript();
+            fetchCuePointPluginConfig();
 
             // Do what is necessary to play the video.
             vm.isVideoPlaying = true;
             vm.isVideoPaused = false;
+        }
+
+        vm.selectKeyword = function(word) {
+            vm.selectedKeyword = word[0];
+            setCuePoints();
+
+            if (!$scope.$$phase) {
+                //$digest or $apply
+                $scope.$apply();
+            }
         }
 
         vm.pauseVideoPlayback = function() {
@@ -135,6 +226,18 @@
         $scope.$on('$destroy', function() {
             // $interval.cancel(nowWidgetTicker);
         });
+
+        function init() {
+            VoiceTranscriptService.getAllRecordings()
+                .then(function(response) {
+                    vm.voiceRecordings = response.data;
+                })
+                .catch(function(error) {
+                    console.log('error occurred - ' + error);
+                });
+        }
+
+        init();
 
         //////////
     }
