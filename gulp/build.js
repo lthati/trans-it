@@ -107,4 +107,10 @@ gulp.task('server', function(){
     ]).pipe(gulp.dest(path.join(conf.paths.dist, '/server')));
 });
 
-gulp.task('build', ['html', 'fonts', 'other', 'server']);
+gulp.task('externalScripts', function(){
+	return gulp.src([
+		path.join(conf.paths.src, '/assets/scripts/*')
+    ]).pipe(gulp.dest(path.join(conf.paths.dist, '/client/assets/scripts')));
+});
+
+gulp.task('build', ['html', 'fonts', 'other', 'server', 'externalScripts']);
