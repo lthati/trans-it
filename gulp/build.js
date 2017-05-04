@@ -63,9 +63,9 @@ gulp.task('html', ['inject', 'partials'], function ()
             removeComments    : true
         }))
         .pipe(htmlFilter.restore)
-        .pipe(gulp.dest(path.join(conf.paths.dist, '/')))
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/client/')))
         .pipe($.size({
-            title    : path.join(conf.paths.dist, '/'),
+            title    : path.join(conf.paths.dist, '/client/'),
             showFiles: true
         }));
 });
@@ -77,7 +77,7 @@ gulp.task('fonts', function ()
     return gulp.src($.mainBowerFiles())
         .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
         .pipe($.flatten())
-        .pipe(gulp.dest(path.join(conf.paths.dist, '/fonts/')));
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/client/fonts/')));
 });
 
 gulp.task('other', function ()
@@ -92,12 +92,19 @@ gulp.task('other', function ()
             path.join('!' + conf.paths.src, '/**/*.{html,css,js,scss}')
         ])
         .pipe(fileFilter)
-        .pipe(gulp.dest(path.join(conf.paths.dist, '/')));
+        .pipe(gulp.dest(path.join(conf.paths.dist, '/client/')));
 });
 
 gulp.task('clean', function ()
 {
-    return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
+    return $.del([path.join(conf.paths.dist, '/client/'), path.join(conf.paths.tmp, '/')]);
 });
 
-gulp.task('build', ['html', 'fonts', 'other']);
+
+gulp.task('server', function(){
+	return gulp.src([
+		path.join(conf.paths.srv, '/**/*')
+    ]).pipe(gulp.dest(path.join(conf.paths.dist, '/server')));
+});
+
+gulp.task('build', ['html', 'fonts', 'other', 'server']);
