@@ -20,7 +20,7 @@
                 WordCloud($scope.wordle, {
                     list: $scope.data,
                     gridSize: 10,
-                    // weightFactor: 2,
+                    weightFactor: 3,
                     fontFamily: 'Finger Paint, cursive, sans-serif',
                     color: '#f0f0c0',
                     hover: window.drawBox,

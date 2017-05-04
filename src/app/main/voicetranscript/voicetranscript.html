@@ -106,6 +106,23 @@
                         <div class="p-16">
                             <!--<nvd3 class="h-400" config="vm.widget6.mainChart.config" options="vm.widget6.mainChart.options" data="vm.widget6.mainChart.data"></nvd3>-->
                             <!--<wordle-player class="h-400" data="vm.wordle"></wordle-player>-->
+                            <!--<md-chips ng-model="vm.wordle" name="fruitName" md-removable="false">
+                                <md-chip-template>
+                                    <strong>{{$chip[0]}}</strong>
+                                    <em>({{$chip[1]}})</em>
+                                </md-chip-template>
+                            </md-chips>-->
+                            <div layout="row" layout-wrap>
+                                <div flex="33" ng-repeat="word in vm.wordle" layout-padding><a href="#">{{word[0]}}</a> ({{word[1]}})</div>
+                                <!--<div flex="66">[flex=66]</div>
+                                <div flex="66">[flex=66]</div>
+                                <div flex="33">[flex=33]</div>
+                                <div flex="33">[flex=33]</div>
+                                <div flex="33">[flex=33]
+                                </div>
+                                <div flex="33">[flex=33]</div>-->
+                            </div>
+                            <!--<span ng-repeat="word in vm.wordle"><a href="#">{{word[0]}}</a>({{word[1]}}) </span>-->
                         </div>
 
                     </ms-widget-front>
