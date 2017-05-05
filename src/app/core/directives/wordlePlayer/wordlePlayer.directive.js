@@ -18,6 +18,7 @@
             link: function($scope, element, attrs, form) {
 
                 $scope.wordle = element.get()[0];
+                window.$box = angular.element('box');
                 WordCloud($scope.wordle, {
                     list: $scope.data,
                     gridSize: 10,
@@ -34,6 +35,7 @@
                 console.log('linking videoPlayer');
                 element.on('$destroy', function() {
                     console.log('destroy of videoPlayer');
+                    $scope.wordle = null;
                 });
             },
             controller: function($scope) {

@@ -149,7 +149,7 @@
         function fetchCuePointPluginConfig() {
             vm.config.plugins = {
                 controls: {
-                    autoHide: true,
+                    autoHide: false,
                     autoHideTime: 5000
                 },
                 cuepoints: {
@@ -212,6 +212,7 @@
 
         vm.pauseVideoPlayback = function() {
             vm.isVideoPaused = true;
+            angular.element('video123').get().seekTime(50);
         }
 
         vm.stopVideoPlayback = function() {
