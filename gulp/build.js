@@ -8,36 +8,34 @@ var $ = require('gulp-load-plugins')({
     pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']
 });
 
-gulp.task('partials', function ()
-{
+gulp.task('partials', function() {
     return gulp.src([
             path.join(conf.paths.src, '/app/**/*.html'),
             path.join(conf.paths.tmp, '/serve/app/**/*.html')
         ])
         .pipe($.htmlmin({
             collapseWhitespace: true,
-            maxLineLength     : 120,
-            removeComments    : true
+            maxLineLength: 120,
+            removeComments: true
         }))
         .pipe($.angularTemplatecache('templateCacheHtml.js', {
             module: 'fuse',
-            root  : 'app'
+            root: 'app'
         }))
         .pipe(gulp.dest(conf.paths.tmp + '/partials/'));
 });
 
-gulp.task('html', ['inject', 'partials'], function ()
-{
-    var partialsInjectFile = gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'), {read: false});
+gulp.task('html', ['inject', 'partials'], function() {
+    var partialsInjectFile = gulp.src(path.join(conf.paths.tmp, '/partials/templateCacheHtml.js'), { read: false });
     var partialsInjectOptions = {
-        starttag    : '<!-- inject:partials -->',
-        ignorePath  : path.join(conf.paths.tmp, '/partials'),
+        starttag: '<!-- inject:partials -->',
+        ignorePath: path.join(conf.paths.tmp, '/partials'),
         addRootSlash: false
     };
 
-    var cssFilter = $.filter('**/*.css', {restore: true});
-    var jsFilter = $.filter('**/*.js', {restore: true});
-    var htmlFilter = $.filter('*.html', {restore: true});
+    var cssFilter = $.filter('**/*.css', { restore: true });
+    var jsFilter = $.filter('**/*.js', { restore: true });
+    var htmlFilter = $.filter('*.html', { restore: true });
 
     return gulp.src(path.join(conf.paths.tmp, '/serve/*.html'))
         .pipe($.inject(partialsInjectFile, partialsInjectOptions))
@@ -45,7 +43,7 @@ gulp.task('html', ['inject', 'partials'], function ()
         .pipe(jsFilter)
         .pipe($.sourcemaps.init())
         .pipe($.ngAnnotate())
-        .pipe($.uglify({preserveComments: $.uglifySaveLicense})).on('error', conf.errorHandler('Uglify'))
+        .pipe($.uglify({ preserveComments: $.uglifySaveLicense })).on('error', conf.errorHandler('Uglify'))
         .pipe($.rev())
         .pipe($.sourcemaps.write('maps'))
         .pipe(jsFilter.restore)
@@ -55,35 +53,33 @@ gulp.task('html', ['inject', 'partials'], function ()
         .pipe($.rev())
         .pipe($.sourcemaps.write('maps'))
         .pipe(cssFilter.restore)
+        .pipe($.replace('bower_components/videogular-cuepoints/', 'styles/'))
         .pipe($.revReplace())
         .pipe(htmlFilter)
         .pipe($.htmlmin({
             collapseWhitespace: true,
-            maxLineLength     : 120,
-            removeComments    : true
+            maxLineLength: 120,
+            removeComments: true
         }))
         .pipe(htmlFilter.restore)
         .pipe(gulp.dest(path.join(conf.paths.dist, '/client/')))
         .pipe($.size({
-            title    : path.join(conf.paths.dist, '/client/'),
+            title: path.join(conf.paths.dist, '/client/'),
             showFiles: true
         }));
 });
 
 // Only applies for fonts from bower dependencies
 // Custom fonts are handled by the "other" task
-gulp.task('fonts', function ()
-{
+gulp.task('fonts', function() {
     return gulp.src($.mainBowerFiles())
         .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
         .pipe($.flatten())
         .pipe(gulp.dest(path.join(conf.paths.dist, '/client/fonts/')));
 });
 
-gulp.task('other', function ()
-{
-    var fileFilter = $.filter(function (file)
-    {
+gulp.task('other', function() {
+    var fileFilter = $.filter(function(file) {
         return file.stat.isFile();
     });
 
@@ -95,22 +91,31 @@ gulp.task('other', function ()
         .pipe(gulp.dest(path.join(conf.paths.dist, '/client/')));
 });
 
-gulp.task('clean', function ()
-{
+gulp.task('clean', function() {
     return $.del([path.join(conf.paths.dist, '/client/'), path.join(conf.paths.tmp, '/')]);
 });
 
 
-gulp.task('server', function(){
-	return gulp.src([
-		path.join(conf.paths.srv, '/**/*')
+gulp.task('server', function() {
+    return gulp.src([
+        path.join(conf.paths.srv, '/**/*')
     ]).pipe(gulp.dest(path.join(conf.paths.dist, '/server')));
 });
 
-gulp.task('externalScripts', function(){
-	return gulp.src([
-		path.join(conf.paths.src, '/assets/scripts/*')
+gulp.task('externalScripts', function() {
+    return gulp.src([
+        path.join(conf.paths.src, '/assets/scripts/*')
     ]).pipe(gulp.dest(path.join(conf.paths.dist, '/client/assets/scripts')));
 });
 
-gulp.task('build', ['html', 'fonts', 'other', 'server', 'externalScripts']);
+gulp.task('cssCopy', function() {
+    gulp.src('./bower_components/videogular-cuepoints/cuepoints.css').pipe(gulp.dest(path.join(conf.paths.dist, '/client/styles/')));
+});
+
+// gulp.task('cssCopy', function() {
+//     gulp.src(path.join(conf.paths.src, '/**/*.css'))
+//         // .pipe(concat('bundle.css'))
+//         .pipe(gulp.dest(conf.paths.dist + '/client/styles/'));
+// });
+
+gulp.task('build', ['html', 'fonts', 'other', 'server', 'externalScripts', 'cssCopy']);

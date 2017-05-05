@@ -212,7 +212,6 @@
 
         vm.pauseVideoPlayback = function() {
             vm.isVideoPaused = true;
-            angular.element('video123').get().seekTime(50);
         }
 
         vm.stopVideoPlayback = function() {
