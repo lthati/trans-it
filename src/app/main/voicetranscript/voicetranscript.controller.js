@@ -136,14 +136,7 @@
         }
 
         function getCuePoints() {
-            VoiceTranscriptService.getCuePoints(vm.selectedRecording.fileId)
-                .then(function(response) {
-                    vm.selectedKeywordCuePoints = response.data;
-                    setCuePoints();
-                })
-                .catch(function(error) {
-                    console.log('cue points error occurred - ' + error);
-                });
+            return VoiceTranscriptService.getCuePoints(vm.selectedRecording.fileId);
         }
 
         function fetchCuePointPluginConfig() {
@@ -163,27 +156,15 @@
                 },
             };
 
-            getCuePoints();
+            return getCuePoints();
         }
 
         function fetchKeywords() {
-            VoiceTranscriptService.getWordCount(vm.selectedRecording.fileId)
-                .then(function(response) {
-                    vm.wordle = response.data;
-                })
-                .catch(function(error) {
-                    console.log('cue points error occurred - ' + error);
-                });
+            return VoiceTranscriptService.getWordCount(vm.selectedRecording.fileId);
         }
 
         function fetchTranscript() {
-            VoiceTranscriptService.getTranscript(vm.selectedRecording.name)
-                .then(function(response) {
-                    vm.transcript = response.data;
-                })
-                .catch(function(error) {
-                    console.log('cue points error occurred - ' + error);
-                });
+            return VoiceTranscriptService.getTranscript(vm.selectedRecording.name);
         }
 
         vm.playVideo = function(recording) {
@@ -191,13 +172,30 @@
             vm.selectedRecording = recording;
             vm.config.sources = [{ src: $sce.trustAsResourceUrl(recording.url), type: 'video/mp4' }];
 
-            fetchKeywords();
-            fetchTranscript();
-            fetchCuePointPluginConfig();
+            fetchKeywords()
+                .then(function(response) {
+                    vm.wordle = response.data;
+                    return fetchTranscript();
+                })
+                .then(function(response) {
+                    vm.transcript = response.data;
+                    return fetchCuePointPluginConfig();
+                })
+                .then(function(response) {
+                    vm.selectedKeywordCuePoints = response.data;
+                    setCuePoints();
 
-            // Do what is necessary to play the video.
-            vm.isVideoPlaying = true;
-            vm.isVideoPaused = false;
+                    // Do what is necessary to play the video.
+                    vm.isVideoPlaying = true;
+                    vm.isVideoPaused = false;
+                })
+                .catch(function(error) {
+                    console.log('cue points error occurred - ' + error);
+
+                    vm.isVideoPlaying = false;
+                    vm.isVideoPaused = false;
+                });
+
         }
 
         vm.selectKeyword = function(word) {
@@ -225,6 +223,7 @@
 
         $scope.$on('$destroy', function() {
             // $interval.cancel(nowWidgetTicker);
+            console.log('')
         });
 
         function init() {
