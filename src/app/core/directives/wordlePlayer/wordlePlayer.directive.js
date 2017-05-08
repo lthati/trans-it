@@ -17,13 +17,14 @@
             templateUrl: 'app/core/directives/wordlePlayer/wordlePlayer.html',
             link: function($scope, element, attrs, form) {
 
-                $scope.wordle = element.get()[0];
+                $scope.wordle = element.get()[0].children[0];
                 window.$box = angular.element('box');
-                WordCloud($scope.wordle, {
+                WordCloud([$scope.wordle], {
                     list: $scope.data,
-                    gridSize: 10,
-                    weightFactor: 2,
-                    fontFamily: 'Finger Paint, cursive, sans-serif',
+                    gridSize: 8,
+                    weightFactor: 1.5,
+                    fontFamily: 'serif',
+                    fontWeight: 'normal',
                     color: '#f0f0c0',
                     hover: window.drawBox,
                     click: function(item) {
@@ -32,9 +33,10 @@
                     },
                     backgroundColor: '#001f00'
                 });
-                console.log('linking videoPlayer');
+                console.log('linking wordle player');
                 element.on('$destroy', function() {
-                    console.log('destroy of videoPlayer');
+                    console.log('destroy of wordle player');
+                    $scope.wordle
                     $scope.wordle = null;
                 });
             },

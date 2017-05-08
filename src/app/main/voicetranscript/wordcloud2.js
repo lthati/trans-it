@@ -155,6 +155,8 @@ if (!window.clearImmediate) {
     };
 
     var WordCloud = function WordCloud(elements, options) {
+
+        console.log('IN wordcloud....');
         if (!isSupported) {
             return;
         }
