@@ -54,6 +54,7 @@ gulp.task('html', ['inject', 'partials'], function() {
         .pipe($.sourcemaps.write('maps'))
         .pipe(cssFilter.restore)
         .pipe($.replace('bower_components/videogular-cuepoints/', 'styles/'))
+        .pipe($.replace('styles/fonts/', 'fonts/'))
         .pipe($.revReplace())
         .pipe(htmlFilter)
         .pipe($.htmlmin({
@@ -92,7 +93,7 @@ gulp.task('other', function() {
 });
 
 gulp.task('clean', function() {
-    return $.del([path.join(conf.paths.dist, '/client/'), path.join(conf.paths.tmp, '/')]);
+    return $.del([path.join(conf.paths.dist, '/'), path.join(conf.paths.tmp, '/')]);
 });
 
 
@@ -112,10 +113,10 @@ gulp.task('cssCopy', function() {
     gulp.src('./bower_components/videogular-cuepoints/cuepoints.css').pipe(gulp.dest(path.join(conf.paths.dist, '/client/styles/')));
 });
 
-// gulp.task('cssCopy', function() {
-//     gulp.src(path.join(conf.paths.src, '/**/*.css'))
-//         // .pipe(concat('bundle.css'))
-//         .pipe(gulp.dest(conf.paths.dist + '/client/styles/'));
+// gulp.task('videogularFontsCopy', function() {
+//     //gulp.src('./bower_components/videogular-themes-default/fonts/').pipe(gulp.dest(path.join(conf.paths.dist, '/client/styles/')));
+//     gulp.src('./bower_components/videogular*/**/fonts/**/*.{ttf,woff,woff2,eot,eof,svg}').pipe(gulp.dest(path.join(conf.paths.dist, '/client/fonts/')));
+
 // });
 
 gulp.task('build', ['html', 'fonts', 'other', 'server', 'externalScripts', 'cssCopy']);

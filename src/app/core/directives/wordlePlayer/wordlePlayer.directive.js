@@ -12,7 +12,7 @@
                 data: '=',
                 wordClicked: '&wordClicked'
             },
-            transclude: false,
+            transclude: true,
             replace: true,
             templateUrl: 'app/core/directives/wordlePlayer/wordlePlayer.html',
             link: function($scope, element, attrs, form) {
