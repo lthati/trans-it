@@ -1,0 +1,277 @@
+<!-- NOTES APP -->
+<div id="notes" class="" layout="column">
+
+    <div class="center" flex ms-scroll>
+
+        <!-- TOOLBAR -->
+        <md-toolbar class="md-accent">
+
+            <div class="md-toolbar-tools" layout="row" layout-align="space-between center">
+
+                <div layout="row">
+
+                    <!-- ADD FILE BUTTON -->
+                    <div id="file-uploader" flow-init="vm.ngFlowOptions" flow-name="vm.ngFlow.flow" flow-files-submitted="vm.upload()" flow-file-added="vm.fileAdded($file)" flow-file-success="vm.fileSuccess($file, $message)" flow-complete="vm.uploadComplete()">
+                        <span class="title">Upload a video</span>
+                        <md-button flow-btn class="add-file-button md-fab md-warn" aria-label="Add file" translate translate-attr-aria-label="FM.ADD_FILE">
+                            <md-icon md-font-icon="icon-plus"></md-icon>
+                        </md-button>
+                    </div>
+                    <!-- / ADD FILE BUTTON -->
+
+                </div>
+
+                <div flex></div>
+
+            </div>
+
+        </md-toolbar>
+        <!-- / TOOLBAR -->
+
+        <!-- CONTENT -->
+        <div class="content">
+
+            <!-- WIDGET GROUP -->
+            <div class="widget-group" layout="row" flex="100" layout-wrap>
+
+                <!-- WIDGET 5 -->
+                <ms-widget layout="column" flex="100" flex-gt-sm="50">
+
+                    <!-- Front -->
+                    <ms-widget-front class="white-bg">
+
+                        <div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+                            <div class="h1">Recordings</div>
+                            <div class="pv-16">
+                                <md-select class="simplified" ng-model="vm.widget6.currentRange" ng-change="vm.widget6.changeRange(vm.widget6.currentRange)" aria-label="Change range">
+                                    <md-option ng-repeat="(key, range) in vm.widget6.ranges" value="{{key}}">
+                                        {{range}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                        </div>
+
+                        <div class="p-16" layout="row" layout-align="space-between center" ng-repeat="recording in vm.voiceRecordings">
+                            <div>
+                                <div class="h3">{{recording.name}}</div>
+                                <div>
+                                    <span class="secondary-text">{{recording.author}}</span>
+                                    <span ng-if="recording.recordingDate">, {{ recording.recordingDate | date:'dd/MM/yyyy @ HH:mm' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="md-icon-button">
+                                <md-button class="md-icon-button" aria-label="More information" ng-click="vm.playVideo(recording)" ng-if="(!vm.isVideoPlaying && !vm.isVideoPaused) || (vm.isVideoPlaying && vm.isVideoPaused)">
+                                    <md-icon md-font-icon="icon-play"></md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" aria-label="More information" ng-click="vm.pauseVideoPlayback()" ng-if="(vm.isVideoPlaying && !vm.isVideoPaused)">
+                                    <md-icon md-font-icon="icon-pause"></md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" aria-label="More information" ng-click="vm.stopVideoPlayback()">
+                                    <md-icon md-font-icon="icon-stop"></md-icon>
+                                </md-button>
+                            </div>
+
+                        </div>
+
+                    </ms-widget-front>
+                    <!-- / Front -->
+
+                </ms-widget>
+                <!-- / WIDGET 5 -->
+
+            </div>
+            <!-- / WIDGET GROUP -->
+
+            <!-- WIDGET GROUP -->
+            <div class="widget-group" layout="row" flex="100" layout-wrap ng-if="vm.isVideoPlaying">
+
+                <!-- WIDGET 6 -->
+                <ms-widget layout="column" flex="100" flex-gt-sm="50">
+
+                    <!-- Front -->
+                    <ms-widget-front class="white-bg">
+
+                        <div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+                            <div class="h1">Keywords</div>
+                            <div class="pv-16">
+                                <md-select class="simplified" ng-model="vm.widget6.currentRange" ng-change="vm.widget6.changeRange(vm.widget6.currentRange)" aria-label="Change range">
+                                    <md-option ng-repeat="(key, range) in vm.widget6.ranges" value="{{key}}">
+                                        {{range}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                        </div>
+
+                        <div class="p-16">
+                            <!--<nvd3 class="h-400" config="vm.widget6.mainChart.config" options="vm.widget6.mainChart.options" data="vm.widget6.mainChart.data"></nvd3>-->
+                            <!--<wordle-player class="h-400" data="vm.wordle"></wordle-player>-->
+                            <!--<md-chips ng-model="vm.wordle" name="fruitName" md-removable="false">
+                                <md-chip-template>
+                                    <strong>{{$chip[0]}}</strong>
+                                    <em>({{$chip[1]}})</em>
+                                </md-chip-template>
+                            </md-chips>-->
+                            <div layout="row" layout-wrap>
+                                <div flex="33" ng-repeat="word in vm.wordle" layout-padding><a href="#" ng-click="vm.selectKeyword(word)">{{word[0]}}</a> ({{word[1]}})</div>
+                                <!--<div flex="66">[flex=66]</div>
+                                <div flex="66">[flex=66]</div>
+                                <div flex="33">[flex=33]</div>
+                                <div flex="33">[flex=33]</div>
+                                <div flex="33">[flex=33]
+                                </div>
+                                <div flex="33">[flex=33]</div>-->
+                            </div>
+                            <!--<span ng-repeat="word in vm.wordle"><a href="#">{{word[0]}}</a>({{word[1]}}) </span>-->
+                        </div>
+
+                    </ms-widget-front>
+                    <!-- / Front -->
+
+                </ms-widget>
+                <!-- / WIDGET 6 -->
+
+                <!-- WIDGET 7 -->
+                <ms-widget layout="column" flex="100" flex-gt-sm="50">
+
+                    <!-- Front -->
+                    <ms-widget-front class="white-bg">
+
+                        <div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+                            <div class="h1">Video</div>
+
+                            <div class="pv-16">
+                                <md-select class="simplified" ng-model="vm.widget7.currentRange" aria-label="Change range">
+                                    <md-option ng-repeat="(key, range) in vm.widget7.ranges" value="{{key}}">
+                                        {{range}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                        </div>
+
+                        <div class="p-16" layout="row" layout-align="space-between center">
+                            <!--<div>
+                                <div class="h3">{{event.title}}</div>
+                                <div>
+                                    <span class="secondary-text">{{event.time}}</span>
+                                    <span ng-if="event.location">, {{event.location}}</span>
+                                </div>
+                            </div>-->
+
+                            <!--<video-player source="vm.selectedRecording.url" type="video/mp4"></video-player>-->
+                            <videogular id="video123" vg-theme="vm.config.theme.url" vg-auto-play="true">
+                                <vg-media vg-src="vm.config.sources" vg-tracks="config.tracks">
+                                </vg-media>
+
+                                <vg-controls vg-autohide="vm.config.plugins.controls.autoHide" vg-autohide-time="vm.config.plugins.controls.autoHideTime">
+                                    <vg-play-pause-button></vg-play-pause-button>
+                                    <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+                                    <vg-scrub-bar>
+                                        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                                        <vg-cuepoints vg-cuepoints-config="vm.config.plugins.cuepoints" vg-cuepoints-theme="vm.config.plugins.cuepoints.theme.url">
+                                        </vg-cuepoints>
+                                    </vg-scrub-bar>
+                                    <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+                                    <vg-time-display>{{ totalTime | date:'mm:ss' }}</vg-time-display>
+                                    <vg-volume>
+                                        <vg-mute-button></vg-mute-button>
+                                        <vg-volume-bar></vg-volume-bar>
+                                    </vg-volume>
+                                    <vg-playback-button></vg-playback-button>
+                                    <vg-fullscreen-button></vg-fullscreen-button>
+                                </vg-controls>
+                            </videogular>
+                        </div>
+
+                    </ms-widget-front>
+                    <!-- / Front -->
+
+                </ms-widget>
+                <!-- / WIDGET 7 -->
+
+
+            </div>
+            <!-- / WIDGET GROUP -->
+
+            <!-- WIDGET GROUP -->
+            <div class="widget-group" layout="row" flex="100" layout-wrap ng-if="vm.isVideoPlaying">
+
+                <!-- WIDGET 6 -->
+                <ms-widget layout="column" flex="100" flex-gt-sm="50">
+
+                    <!-- Front -->
+                    <ms-widget-front class="white-bg">
+
+                        <div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+                            <div class="h1">Word Cloud</div>
+                            <div class="pv-16">
+                                <md-select class="simplified" ng-model="vm.widget6.currentRange" ng-change="vm.widget6.changeRange(vm.widget6.currentRange)" aria-label="Change range">
+                                    <md-option ng-repeat="(key, range) in vm.widget6.ranges" value="{{key}}">
+                                        {{range}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                        </div>
+
+                        <div class="p-16">
+                            <!--<nvd3 class="h-400" config="vm.widget6.mainChart.config" options="vm.widget6.mainChart.options" data="vm.widget6.mainChart.data"></nvd3>-->
+                            <wordle-player class="h-400" data="vm.wordle" word-clicked="vm.selectKeyword"></wordle-player>
+                        </div>
+
+                        <div class="pv-8 mh-16 border-top" layout="row" layout-align="start center" layout-wrap>
+                            <div class="pv-8 border-right" layout="column" layout-align="center center" flex="100" flex-gt-xs="50">
+                                <span class="font-size-32">{{vm.widget6.footerLeft.count[vm.widget6.currentRange]}}</span>
+                                <span class="h4">{{vm.widget6.footerLeft.title}}</span>
+                            </div>
+
+                            <div class="pv-8" layout="column" layout-align="center center" flex="100" flex-gt-xs="50">
+                                <span class="font-size-32">{{vm.widget6.footerRight.count[vm.widget6.currentRange]}}</span>
+                                <span class="h4">{{vm.widget6.footerRight.title}}</span>
+                            </div>
+                        </div>
+
+                    </ms-widget-front>
+                    <!-- / Front -->
+
+                </ms-widget>
+                <!-- / WIDGET 6 -->
+
+                <!-- WIDGET 7 -->
+                <ms-widget layout="column" flex="100" flex-gt-sm="50">
+
+                    <!-- Front -->
+                    <ms-widget-front class="white-bg">
+
+                        <div class="ph-16 border-bottom" layout="row" layout-align="space-between center">
+                            <div class="h1">Transcript</div>
+
+                            <div class="pv-16">
+                                <md-select class="simplified" ng-model="vm.widget7.currentRange" aria-label="Change range">
+                                    <md-option ng-repeat="(key, range) in vm.widget7.ranges" value="{{key}}">
+                                        {{range}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                        </div>
+                        <div class="p-16" layout="row" layout-align="space-between center">
+                            <textarea flex class="h-400" ng-bind-html="vm.transcript">
+                                
+                            </textarea>
+                        </div>
+
+                    </ms-widget-front>
+                    <!-- / Front -->
+
+                </ms-widget>
+                <!-- / WIDGET 7 -->
+
+            </div>
+            <!-- / WIDGET GROUP -->
+
+        </div>
+        <!-- / CONTENT -->
+
+    </div>
+
+</div>
+<!-- / NOTES APP -->

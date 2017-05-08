@@ -1,1 +1,1 @@
-# trans-it
+# AngularJS - Fuse admin template.
